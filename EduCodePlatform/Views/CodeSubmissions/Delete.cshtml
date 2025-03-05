@@ -1,0 +1,32 @@
+﻿@model EduCodePlatform.Models.CodeSubmission
+
+@{
+    ViewData["Title"] = "Видалити Code Submission";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-warning" role="alert">
+    Ви впевнені, що хочете видалити це подання?
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.CodeSubmissionId</dd>
+
+            <dt class="col-sm-3">UserId</dt>
+            <dd class="col-sm-9">@Model.UserId</dd>
+
+            <dt class="col-sm-3">Мова</dt>
+            <dd class="col-sm-9">@Model.ProgrammingLanguage?.Name</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post" class="mt-3">
+    <input type="hidden" name="id" value="@Model.CodeSubmissionId" />
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+</form>

@@ -1,0 +1,40 @@
+﻿@model EduCodePlatform.Models.CodeSubmission
+
+@{
+    ViewData["Title"] = "Деталі Code Submission";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.CodeSubmissionId</dd>
+
+            <dt class="col-sm-3">UserId</dt>
+            <dd class="col-sm-9">@Model.UserId</dd>
+
+            <dt class="col-sm-3">CodeText</dt>
+            <dd class="col-sm-9">@Model.CodeText</dd>
+
+            <dt class="col-sm-3">Мова</dt>
+            <dd class="col-sm-9">@Model.ProgrammingLanguage?.Name</dd>
+
+            <dt class="col-sm-3">Створено</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("g")</dd>
+
+            <dt class="col-sm-3">Оновлено</dt>
+            <dd class="col-sm-9">
+                @(Model.UpdatedAt.HasValue
+                    ? Model.UpdatedAt.Value.ToString("g")
+                    : "Немає")
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.CodeSubmissionId" class="btn btn-warning">Редагувати</a>
+    <a asp-action="Index" class="btn btn-secondary">Назад</a>
+</div>

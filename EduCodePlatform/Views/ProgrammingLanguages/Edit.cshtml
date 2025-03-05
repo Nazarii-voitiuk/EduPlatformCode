@@ -1,0 +1,27 @@
+﻿@model EduCodePlatform.Models.ProgrammingLanguage
+
+@{
+    ViewData["Title"] = "Редагувати мову програмування";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Ми приймаємо LanguageId та Name як окремі поля -->
+<form asp-action="Edit" method="post">
+    <!-- Приховане поле для ID -->
+    <input type="hidden" name="id" value="@Model.LanguageId" />
+
+    <div class="form-group">
+        <label for="Name">Назва мови</label>
+        <input type="text" name="Name" value="@Model.Name" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessage("Name")</span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Зберегти зміни</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
