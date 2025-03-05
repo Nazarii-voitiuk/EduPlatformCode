@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Створити Code Submission";
+    var languageList = ViewBag.LanguageList as IEnumerable<dynamic>;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="userId">UserId</label>
+        <input type="text" name="userId" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessage("UserId")</span>
+    </div>
+    <div class="form-group">
+        <label for="codeText">Code Text</label>
+        <textarea name="codeText" class="form-control"></textarea>
+        <span class="text-danger">@Html.ValidationMessage("CodeText")</span>
+    </div>
+    <div class="form-group">
+        <label for="languageId">Мова програмування</label>
+        <select name="languageId" class="form-control">
+            <option value="0">-- Оберіть мову --</option>
+            @if (languageList != null)
+            {
+                foreach (var lang in languageList)
+                {
+                    <option value="@lang.LanguageId">@lang.Name</option>
+                }
+            }
+        </select>
+        <span class="text-danger">@Html.ValidationMessage("LanguageId")</span>
+    </div>
+    <button type="submit" class="btn btn-success mt-2">Зберегти</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
