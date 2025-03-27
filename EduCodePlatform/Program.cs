@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Додаємо сервіси до контейнера
 builder.Services.AddControllersWithViews();
 
-// Реєструємо контекст бази даних
+// Реєструємо контекст бази даних12312
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
