@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EduCodePlatform.Data;                  // де лежить ApplicationDbContext
+using EduCodePlatform.Models.Entities;       // де лежить CodeSubmission
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using EduCodePlatform.Data;
-using EduCodePlatform.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,169 +10,132 @@ namespace EduCodePlatform.Controllers
 {
     public class CodeSubmissionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _db;
 
-        public CodeSubmissionsController(ApplicationDbContext context)
+        public CodeSubmissionsController(ApplicationDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
-        // GET: CodeSubmissions
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        // GET: /CodeSubmissions/Index
+        public IActionResult Index()
         {
-            // Завантажуємо всі CodeSubmission з приєднаною мовою
-            var submissions = await _context.CodeSubmissions
-                .Include(cs => cs.ProgrammingLanguage)
-                .ToListAsync();
-            return View(submissions);
-        }
-
-        // GET: CodeSubmissions/Details/5
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var submission = await _context.CodeSubmissions
-                .Include(cs => cs.ProgrammingLanguage)
-                .FirstOrDefaultAsync(m => m.CodeSubmissionId == id);
-            if (submission == null)
-                return NotFound();
-
-            return View(submission);
-        }
-
-        // GET: CodeSubmissions/Create
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            // Передаємо список мов для випадаючого списку
-            ViewBag.LanguageList = await _context.ProgrammingLanguages
-                .Select(pl => new { pl.LanguageId, pl.Name })
-                .ToListAsync();
-
+            // Просто повертаємо View з таблицею або інтерфейсом,
+            // де через AJAX будемо викликати GetAll, Create, Edit, Delete
             return View();
         }
 
-        // POST: CodeSubmissions/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string userId, string codeText, int languageId)
-        {
-            // Перевіряємо валідацію вручну
-            if (string.IsNullOrWhiteSpace(userId))
-                ModelState.AddModelError("UserId", "UserId не може бути порожнім.");
-            if (string.IsNullOrWhiteSpace(codeText))
-                ModelState.AddModelError("CodeText", "CodeText не може бути порожнім.");
-            if (languageId <= 0)
-                ModelState.AddModelError("LanguageId", "Оберіть коректну мову.");
-
-            // Якщо є помилки – повертаємо ту саму форму з повідомленнями
-            if (!ModelState.IsValid)
-            {
-                // Знову завантажуємо список мов
-                ViewBag.LanguageList = await _context.ProgrammingLanguages
-                    .Select(pl => new { pl.LanguageId, pl.Name })
-                    .ToListAsync();
-                return View();
-            }
-
-            // Створюємо об’єкт вручну
-            var submission = new CodeSubmission
-            {
-                UserId = userId,
-                CodeText = codeText,
-                LanguageId = languageId,
-                CreatedAt = DateTime.Now
-            };
-
-            _context.CodeSubmissions.Add(submission);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: CodeSubmissions/Edit/5
+        // GET: /CodeSubmissions/GetAll
+        // Повертає JSON зі списком сабмішенів
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> GetAll()
         {
-            var submission = await _context.CodeSubmissions.FindAsync(id);
-            if (submission == null)
-                return NotFound();
-
-            // Передаємо список мов у ViewBag
-            ViewBag.LanguageList = await _context.ProgrammingLanguages
-                .Select(pl => new { pl.LanguageId, pl.Name })
+            // Якщо немає зв'язку з ProgrammingLanguage,
+            // просто обираємо дані з CodeSubmission
+            var submissions = await _db.CodeSubmissions
+                .Select(c => new
+                {
+                    c.CodeSubmissionId,
+                    c.UserId,
+                    HtmlCode = c.HtmlCode,
+                    CssCode = c.CssCode,
+                    JsCode = c.JsCode,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt
+                })
                 .ToListAsync();
 
-            return View(submission);
+            return Json(submissions);
         }
 
-        // POST: CodeSubmissions/Edit/5
+        // POST: /CodeSubmissions/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int codeSubmissionId, string userId, string codeText, int languageId)
+        public async Task<IActionResult> Create([FromBody] CodeSubmission model)
         {
-            // Перевіряємо базові речі
-            if (string.IsNullOrWhiteSpace(userId))
-                ModelState.AddModelError("UserId", "UserId не може бути порожнім.");
-            if (string.IsNullOrWhiteSpace(codeText))
-                ModelState.AddModelError("CodeText", "CodeText не може бути порожнім.");
-            if (languageId <= 0)
-                ModelState.AddModelError("LanguageId", "Оберіть коректну мову.");
-
-            var submission = await _context.CodeSubmissions.FindAsync(codeSubmissionId);
-            if (submission == null)
-                return NotFound();
-
-            if (!ModelState.IsValid)
+            // Перевірка, що model != null
+            if (model == null)
             {
-                // Знову передаємо список мов
-                ViewBag.LanguageList = await _context.ProgrammingLanguages
-                    .Select(pl => new { pl.LanguageId, pl.Name })
-                    .ToListAsync();
-
-                // Повертаємо назад у в’юшку, заповнюючи поля, щоб користувач бачив поточні дані
-                submission.UserId = userId;
-                submission.CodeText = codeText;
-                submission.LanguageId = languageId;
-                return View(submission);
+                return BadRequest("No data received.");
             }
 
-            // Оновлюємо поля вручну
-            submission.UserId = userId;
-            submission.CodeText = codeText;
-            submission.LanguageId = languageId;
-            submission.UpdatedAt = DateTime.Now;
+            try
+            {
+                // (Опціонально) Якщо потрібно, щоб UserId був поточним логіном:
+                // string currentUserId = User.Identity.Name; 
+                // або ClaimTypes.NameIdentifier, якщо налаштовано Identity
+                // model.UserId = currentUserId;
 
-            _context.Update(submission);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                model.CreatedAt = DateTime.UtcNow;
+                model.UpdatedAt = DateTime.UtcNow;
+
+                _db.CodeSubmissions.Add(model);
+                await _db.SaveChangesAsync();
+
+                return Ok(new { success = true, message = "Code submission created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // GET: CodeSubmissions/Delete/5
-        [HttpGet]
+        // PUT: /CodeSubmissions/Edit
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromBody] CodeSubmission model)
+        {
+            if (model == null || model.CodeSubmissionId <= 0)
+            {
+                return BadRequest("Invalid submission ID or no data provided.");
+            }
+
+            try
+            {
+                var entity = await _db.CodeSubmissions
+                    .FirstOrDefaultAsync(c => c.CodeSubmissionId == model.CodeSubmissionId);
+
+                if (entity == null)
+                    return NotFound("CodeSubmission not found.");
+
+                // Оновлюємо потрібні поля
+                entity.HtmlCode = model.HtmlCode;
+                entity.CssCode = model.CssCode;
+                entity.JsCode = model.JsCode;
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                // (Опціонально) Якщо треба оновлювати UserId — робимо це
+                // entity.UserId = model.UserId;
+
+                await _db.SaveChangesAsync();
+
+                return Ok(new { success = true, message = "Updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: /CodeSubmissions/Delete/5
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var submission = await _context.CodeSubmissions
-                .Include(cs => cs.ProgrammingLanguage)
-                .FirstOrDefaultAsync(m => m.CodeSubmissionId == id);
-            if (submission == null)
-                return NotFound();
-
-            return View(submission);
-        }
-
-        // POST: CodeSubmissions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var submission = await _context.CodeSubmissions.FindAsync(id);
-            if (submission != null)
+            try
             {
-                _context.CodeSubmissions.Remove(submission);
-                await _context.SaveChangesAsync();
+                var entity = await _db.CodeSubmissions
+                    .FirstOrDefaultAsync(c => c.CodeSubmissionId == id);
+
+                if (entity == null)
+                    return NotFound("CodeSubmission not found.");
+
+                _db.CodeSubmissions.Remove(entity);
+                await _db.SaveChangesAsync();
+
+                return Ok(new { success = true, message = "Deleted successfully" });
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

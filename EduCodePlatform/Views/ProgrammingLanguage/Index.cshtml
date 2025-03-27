@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Programming Languages";
+}
+
+<h2>Programming Languages</h2>
+
+<!-- Кнопка "Create New" для виклику модального вікна -->
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#languageModal" onclick="openCreateModal()">Create New Language</button>
+
+<!-- Таблиця -->
+<table class="table table-bordered" id="languageTable">
+    <thead>
+        <tr>
+            <th>Language Id</th>
+            <th>Name</th>
+            <th style="width:200px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Тут заповнюється AJAX-ом -->
+    </tbody>
+</table>
+
+<!-- Модальне вікно (Bootstrap) -->
+<div class="modal fade" id="languageModal" tabindex="-1" role="dialog" aria-labelledby="languageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="languageModalLabel">Create/Edit Language</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="languageForm">
+                    <input type="hidden" id="LanguageId" />
+                    <div class="form-group">
+                        <label for="LanguageName">Name</label>
+                        <input type="text" class="form-control" id="LanguageName" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+                <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveLanguage()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Підключення jQuery, Bootstrap JavaScript (якщо не підключені в _Layout.cshtml) -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Наш JS-файл із логікою AJAX -->
+    <script src="~/js/programmingLanguage.js"></script>
+}

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduCodePlatform", "EduCodePlatform\EduCodePlatform.csproj", "{DACC6EDA-A204-4E50-A822-F28395417D71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduCodePlatform", "EduCodePlatform\EduCodePlatform.csproj", "{6BC47E68-9AF6-492F-B8B5-C97734DAFB57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DACC6EDA-A204-4E50-A822-F28395417D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DACC6EDA-A204-4E50-A822-F28395417D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DACC6EDA-A204-4E50-A822-F28395417D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DACC6EDA-A204-4E50-A822-F28395417D71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC47E68-9AF6-492F-B8B5-C97734DAFB57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC47E68-9AF6-492F-B8B5-C97734DAFB57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC47E68-9AF6-492F-B8B5-C97734DAFB57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC47E68-9AF6-492F-B8B5-C97734DAFB57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2AAD88DF-5209-4AC4-8340-752CF8C065A4}
+		SolutionGuid = {AB340DEE-37D3-468C-8731-87F276689F83}
 	EndGlobalSection
 EndGlobal
