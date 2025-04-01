@@ -1,19 +1,34 @@
-using EduCodePlatform.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EduCodePlatform.Data;
+using EduCodePlatform.Models.Identity; // ГўГ Гё ГЄГ«Г Г± ApplicationUser
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Додаємо сервіси до контейнера
+// Г„Г®Г¤Г ВєГ¬Г® Г±ГҐГ°ГўВіГ±ГЁ Г¤Г® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г 
 builder.Services.AddControllersWithViews();
 
-// Реєструємо контекст бази даних123123123
+// ГђГҐВєГ±ГІГ°ГіВєГ¬Г® ГЄГ®Г­ГІГҐГЄГ±ГІ ГЎГ Г§ГЁ Г¤Г Г­ГЁГµ123123123
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Identity Г§ ГўГ ГёГЁГ¬ ApplicationUser : IdentityUser
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+// ГЊГ®Г¦Г«ГЁГўГ®, ГїГЄГ№Г® ГЇГ«Г Г­ГіВєГІГҐ ГўГЁГЄГ®Г°ГЁГ±ГІГ®ГўГіГўГ ГІГЁ Г±ГІГ®Г°ВіГ­ГЄГЁ Razor Area Identity
+builder.Services.AddRazorPages();
+
+// ГЊГ®Г¦Г­Г  ГІГ ГЄГ®Г¦ .AddControllersWithViews()
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
-// Налаштування конвеєра обробки запитів
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -25,10 +40,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Identity
+app.UseAuthentication();
 app.UseAuthorization();
 
+// ГЊГ Г°ГёГ°ГіГІГЁ
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+
+// Г„Г«Гї Razor Pages Identity
+app.MapRazorPages();
 
 app.Run();

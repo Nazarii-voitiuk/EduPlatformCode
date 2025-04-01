@@ -1,0 +1,42 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* Див. інлайн-стилі у <body>, можна перенести сюди */
+    display: flex;
+    flex-direction: column;
+}
+
+.container.flex-grow-1 {
+    /* Можна налаштувати відступи, тло, тінь, тощо */
+}
+
+.footer {
+    /* Якщо треба змінити стилі футера */
+    position: relative;
+}
+
+/* Приклад стилю для navbar brand */
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+/* Стилізуємо заголовки h2 */
+h2 {
+    border-left: 4px solid #6610f2; /* колір Bootstrap "purple" */
+    padding-left: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Застінюємо основні контейнери */
+.container {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+

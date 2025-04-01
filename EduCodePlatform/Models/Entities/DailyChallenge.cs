@@ -1,0 +1,31 @@
+﻿using EduCodePlatform.Models.Entities;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EduCodePlatform.Data.Entities
+{
+    [Table("DailyChallenge")]
+    public class DailyChallenge
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("DailyChallengeId")]
+        public int DailyChallengeId { get; set; }
+
+        [Column("Title")]
+        public string Title { get; set; }
+
+        [Column("Description", TypeName = "text")]
+        public string Description { get; set; }
+
+        [Column("ChallengeDate")]
+        public DateTime ChallengeDate { get; set; }
+
+        [Column("CreatedBy")]
+        public string CreatedBy { get; set; }
+
+        [ForeignKey(nameof(CreatedBy))]
+        public AppUser CreatedByUser { get; set; }
+    }
+}

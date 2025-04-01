@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Online Editor";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3 text-center">Online HTML/CSS/JS Editor</h2>
+
+    <div class="row">
+        <!-- HTML Editor -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-file-code"></i> HTML
+                </div>
+                <div class="card-body p-0">
+                    <textarea id="htmlEditor"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- CSS Editor -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <i class="fa fa-paint-brush"></i> CSS
+                </div>
+                <div class="card-body p-0">
+                    <textarea id="cssEditor"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- JS Editor -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <i class="fa fa-code"></i> JavaScript
+                </div>
+                <div class="card-body p-0">
+                    <textarea id="jsEditor"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопки “Run” та “Save” -->
+    <div class="row mb-3">
+        <div class="col text-center">
+            <button class="btn btn-primary me-2" onclick="runCode()">
+                <i class="fa fa-play"></i> Run
+            </button>
+            <button class="btn btn-success" onclick="saveCode()">
+                <i class="fa fa-save"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <!-- Картка з iframe (прев’ю) -->
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <i class="fa fa-eye"></i> Preview
+                </div>
+                <div class="card-body p-0" style="height: 400px;">
+                    <iframe id="previewFrame" style="width:100%; height:100%; border:0;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <!-- Font Awesome (для іконок) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- CodeMirror CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/theme/neo.min.css" rel="stylesheet" />
+
+    <style>
+        /* Фіксована висота редакторів (300px) + прокрутка */
+        .CodeMirror {
+            height: 300px;
+            border: 1px solid #ddd;
+        }
+
+        .CodeMirror-scroll {
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <!-- CodeMirror JS (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/addon/edit/closetag.min.js"></script>
+
+    <!-- Наш зовнішній скрипт -->
+    <script src="~/js/editor.js"></script>
+}
