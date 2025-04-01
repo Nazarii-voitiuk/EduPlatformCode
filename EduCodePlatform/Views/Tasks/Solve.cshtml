@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Solve Task (AJAX Check)";
+    var tid = (int)ViewBag.TaskId;
+}
+
+<h2>Solve Task (#@tid)</h2>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">HTML</div>
+            <div class="card-body p-0">
+                <textarea id="htmlEditor"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">CSS</div>
+            <div class="card-body p-0">
+                <textarea id="cssEditor"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">JS</div>
+            <div class="card-body p-0">
+                <textarea id="jsEditor"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-primary me-2" onclick="runPreview()">Run Preview</button>
+<button class="btn btn-success" onclick="checkSolution()">Check</button>
+
+<input type="hidden" id="taskId" value="@tid" />
+
+<div class="card mt-3">
+    <div class="card-header bg-dark text-white">Preview</div>
+    <div class="card-body p-0" style="height:300px;">
+        <iframe id="previewFrame" style="width:100%; height:100%; border:0;"></iframe>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/theme/neo.min.css" />
+    <style>
+        .CodeMirror {
+            height: 200px;
+            border: 1px solid #ccc;
+        }
+
+        .CodeMirror-scroll {
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/addon/edit/closetag.min.js"></script>
+
+    <script src="~/js/tasksSolve.js"></script>
+}

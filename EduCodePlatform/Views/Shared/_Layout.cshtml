@@ -17,27 +17,25 @@
     <!-- Bootstrap 5 (CDN або локальний) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
-    <!-- Font Awesome для іконок -->
+    <!-- Font Awesome (іконки) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <!-- site.css -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
-    <!-- custom.css з вашими додатковими стилями -->
+    <!-- custom.css -->
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
 </head>
 <body style="height:100%; display:flex; flex-direction:column; font-family: 'Open Sans', sans-serif;">
     <header>
-        <!-- navbar-expand-lg => адаптується на мобільних -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container-fluid">
-                <!-- Логотип / Brand -->
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                <!-- Логотип / Назва сайту -->
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     <i class="fa fa-code" aria-hidden="true"></i> EduCodePlatform
                 </a>
-                <!-- Кнопка для мобільного меню -->
+                <!-- Кнопка для мобільної версії -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                         aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -46,51 +44,74 @@
                 <!-- Основний блок меню -->
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- Посилання Home -->
+                        <!-- Home -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <i class="fa fa-home"></i> Home
                             </a>
                         </li>
-                        <!-- Посилання Privacy -->
+
+                        <!-- Privacy -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
                                 <i class="fa fa-shield-alt"></i> Privacy
                             </a>
                         </li>
 
-                        <!-- Приклади посилань на CodeSubmissions, ProgrammingLanguage -->
+                        <!-- Submissions -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="CodeSubmissions" asp-action="Index">
-                                <i class="fa fa-code-branch"></i> Code Submissions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="ProgrammingLanguage" asp-action="Index">
-                                <i class="fa fa-book"></i> Languages
+                            <a class="nav-link" asp-controller="Submissions" asp-action="Index">
+                                <i class="fa fa-code-branch"></i> Submissions
                             </a>
                         </li>
 
-                        <!-- Приклад, якщо треба Editor -->
+                        <!-- Gallery -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Editor" asp-action="Index">
+                            <a class="nav-link" asp-controller="Submissions" asp-action="Gallery">
+                                <i class="fa fa-globe"></i> Gallery
+                            </a>
+                        </li>
+
+                        <!-- My Profile -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Submissions" asp-action="MyProfile">
+                                <i class="fa fa-user-circle"></i> My Profile
+                            </a>
+                        </li>
+
+                        <!-- Editor -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Submissions" asp-action="Editor">
                                 <i class="fa fa-edit"></i> Editor
+                            </a>
+                        </li>
+
+                        <!-- Tasks -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Tasks" asp-action="Index">
+                                <i class="fa fa-tasks"></i> Tasks
+                            </a>
+                        </li>
+
+                        <!-- Якщо потрібно, можна додати Difficulties -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="TaskDifficulty" asp-action="Index">
+                                <i class="fa fa-list-ul"></i> Difficulties
                             </a>
                         </li>
                     </ul>
 
                     <!-- Правий блок (автентифікація) -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ms-auto">
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <!-- Якщо користувач залогінений -->
+                            <!-- Якщо залогінено -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-user"></i> @User.Identity.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <!-- Профіль, налаштування, тощо -->
                                     <li>
                                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
                                             <i class="fa fa-cog"></i> Manage Account
@@ -98,8 +119,7 @@
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
-                                        <form asp-area="Identity" asp-page="/Account/Logout" method="post"
-                                              class="d-inline">
+                                        <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="fa fa-sign-out-alt"></i> Logout
                                             </button>
@@ -110,7 +130,7 @@
                         }
                         else
                         {
-                            <!-- Якщо користувач неавторизований -->
+                            <!-- Якщо неавторизовано -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
                                     <i class="fa fa-sign-in-alt"></i> Login
@@ -128,29 +148,31 @@
         </nav>
     </header>
 
-    <!-- Основний контент -->
+    <!-- Контент -->
     <div class="container mt-4 flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <!-- Футер, "прилипає" до низу сторінки, бо body -> display:flex; flex-direction:column; -->
+    <!-- Футер -->
     <footer class="footer bg-dark text-light py-3 mt-auto">
         <div class="container text-center">
             <p class="mb-1">&copy; 2025 - EduCodePlatform</p>
             <p class="small">Learn. Code. Share.</p>
             <p>
-                <a class="text-decoration-none text-info" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> |
+                <a class="text-decoration-none text-info" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                |
                 <a class="text-decoration-none text-info" href="https://github.com/your-repo">GitHub</a>
             </p>
         </div>
     </footer>
 
-    <!-- Підключаємо Bootstrap JS, jQuery (за потреби) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <!-- Ваш site.js -->
+    <!-- site.js -->
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

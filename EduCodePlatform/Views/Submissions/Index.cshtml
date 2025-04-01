@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Submissions - Internal List";
+}
+
+<h2>Submissions (Internal)</h2>
+
+<button class="btn btn-primary mb-3" onclick="goCreate()">Create New Submission</button>
+
+<table class="table table-bordered" id="submissionsTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>UserId</th>
+            <th>Title</th>
+            <th>IsPublic</th>
+            <th>CreatedAt</th>
+            <th style="width:160px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/submissionsIndex.js"></script>
+}

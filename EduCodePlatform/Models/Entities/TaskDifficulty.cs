@@ -8,7 +8,6 @@ namespace EduCodePlatform.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("DifficultyId")]
         public int DifficultyId { get; set; }
 
         [Column("DifficultyName")]

@@ -1,4 +1,5 @@
 ﻿using EduCodePlatform.Models.Entities;
+using EduCodePlatform.Models.Identity;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +27,6 @@ namespace EduCodePlatform.Data.Entities
         public string OwnerId { get; set; }
 
         [ForeignKey(nameof(OwnerId))]
-        public AppUser Owner { get; set; }
+        public ApplicationUser Owner { get; set; }
     }
 }

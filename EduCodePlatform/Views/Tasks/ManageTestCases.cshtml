@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Manage Test Cases";
+    var tid = (int)ViewBag.TaskId;
+}
+
+<h2>Manage Test Cases (TaskId=@tid)</h2>
+<button class="btn btn-primary mb-3" onclick="openCreateTcModal()">Create New TestCase</button>
+
+<table class="table table-bordered" id="testCasesTable">
+    <thead>
+        <tr>
+            <th>TestCaseId</th>
+            <th>HtmlRules</th>
+            <th>CssRules</th>
+            <th>InputData</th>
+            <th>ExpectedJsOutput</th>
+            <th>TimeLimit</th>
+            <th>Points</th>
+            <th style="width:140px;"></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Modal for Create/Edit testCase -->
+<div class="modal fade" id="tcModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tcModalLabel">Create/Edit TestCase</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="TestCaseId" />
+                <input type="hidden" id="TaskId" value="@tid" />
+
+                <div class="mb-2">
+                    <label>HtmlRules (e.g. require-h1)</label>
+                    <textarea class="form-control" id="HtmlRules"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label>CssRules (e.g. require-body-background)</label>
+                    <textarea class="form-control" id="CssRules"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label>InputData</label>
+                    <textarea class="form-control" id="InputData"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label>ExpectedJsOutput</label>
+                    <textarea class="form-control" id="ExpectedJsOutput"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label>TimeLimit (sec)</label>
+                    <input type="number" class="form-control" id="TimeLimitSeconds" value="2" />
+                </div>
+                <div class="mb-2">
+                    <label>Points</label>
+                    <input type="number" class="form-control" id="Points" value="10" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" onclick="saveTestCase()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tasksTestCases.js"></script>
+}

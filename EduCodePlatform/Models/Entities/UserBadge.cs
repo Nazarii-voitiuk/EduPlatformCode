@@ -1,4 +1,5 @@
 ﻿using EduCodePlatform.Models.Entities;
+using EduCodePlatform.Models.Identity;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,7 +19,7 @@ namespace EduCodePlatform.Data.Entities
         public string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public AppUser User { get; set; }
+        public ApplicationUser User { get; set; }
 
         // Зовнішній ключ на Badge
         [Column("BadgeId")]
