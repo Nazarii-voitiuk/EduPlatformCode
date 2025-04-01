@@ -13,15 +13,19 @@ namespace EduCodePlatform.Models.Entities
         [Column("CodeSubmissionId")]
         public int CodeSubmissionId { get; set; }
 
-        // Зовнішній ключ на AppUser (Identity)
         [Required]
         [Column("UserId")]
         public string UserId { get; set; }
 
-        [ForeignKey(nameof(UserId))]
+        // Посилання на користувача (опціонально)
         public ApplicationUser User { get; set; }
 
-        // Окремі поля
+        [Column("Title")]
+        public string Title { get; set; } // Назва шаблону
+
+        [Column("IsPublic")]
+        public bool IsPublic { get; set; } // Публічний шаблон чи ні
+
         [Column("HtmlCode", TypeName = "text")]
         public string HtmlCode { get; set; }
 

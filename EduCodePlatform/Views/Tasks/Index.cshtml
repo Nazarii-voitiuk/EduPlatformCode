@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Tasks";
+}
+
+<h2>Tasks</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <button class="btn btn-primary mb-3" onclick="openCreateModal()">Create New Task</button>
+}
+
+<table class="table table-bordered" id="tasksTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>CreatedAt</th>
+            <th style="width:220px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Заповнюється через AJAX (loadTasks) -->
+    </tbody>
+</table>
+
+<!-- Модальне вікно Create/Edit -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <!-- modal-lg, бо багато полів -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Create/Edit Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="TaskId" />
+
+                <div class="mb-3">
+                    <label>Title</label>
+                    <input type="text" class="form-control" id="Title" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Description</label>
+                    <textarea class="form-control" id="Description"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label>Difficulty</label>
+                    <select class="form-select" id="DifficultySelect"></select>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="IsAIgenerated" />
+                    <label class="form-check-label">Is AI generated?</label>
+                </div>
+
+                <!-- Reference Code Fields -->
+                <hr />
+                <h5>Reference Code (Admin sets an "ideal" solution)</h5>
+                <div class="mb-3">
+                    <label>Reference HTML</label>
+                    <textarea class="form-control" id="ReferenceHtml" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label>Reference CSS</label>
+                    <textarea class="form-control" id="ReferenceCss" rows="2"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label>Reference JS</label>
+                    <textarea class="form-control" id="ReferenceJs" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveTask()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tasksIndex.js"></script>
+}

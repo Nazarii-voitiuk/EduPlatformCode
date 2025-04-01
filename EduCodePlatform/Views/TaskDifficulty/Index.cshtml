@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "TaskDifficulty (AJAX)";
+}
+
+<h2>Task Difficulty (AJAX CRUD)</h2>
+
+<button class="btn btn-primary mb-3" onclick="openCreateModal()">Create New Difficulty</button>
+
+<table class="table table-bordered" id="diffTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>DifficultyName</th>
+            <th style="width:150px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="diffModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="diffModalLabel">Create/Edit Difficulty</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="DifficultyId" />
+        <div class="mb-3">
+            <label>DifficultyName</label>
+            <input type="text" class="form-control" id="DifficultyName" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" onclick="saveDifficulty()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+        <script src="~/js/taskDifficultyIndex.js"></script>
+}

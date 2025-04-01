@@ -8,23 +8,26 @@ namespace EduCodePlatform.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("TestCaseId")]
         public int TestCaseId { get; set; }
 
-        // Зовнішній ключ на Task
         [Column("TaskId")]
         public int TaskId { get; set; }
-
-        [ForeignKey(nameof(TaskId))]
         public CodingTask Task { get; set; }
 
-        [Column("Input", TypeName = "text")]
-        public string Input { get; set; }
+        [Column("HtmlRules", TypeName = "text")]
+        public string HtmlRules { get; set; }
 
-        [Column("ExpectedOutput", TypeName = "text")]
-        public string ExpectedOutput { get; set; }
+        [Column("CssRules", TypeName = "text")]
+        public string CssRules { get; set; }
 
-        [Column("Points")]
+        [Column("InputData", TypeName = "text")]
+        public string InputData { get; set; }
+
+        [Column("ExpectedJsOutput", TypeName = "text")]
+        public string ExpectedJsOutput { get; set; }
+
         public int Points { get; set; }
+
+        public int TimeLimitSeconds { get; set; } = 2;
     }
 }

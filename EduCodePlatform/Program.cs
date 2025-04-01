@@ -1,33 +1,42 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EduCodePlatform.Data;
-using EduCodePlatform.Models.Identity; // ГўГ Гё ГЄГ«Г Г± ApplicationUser
+using EduCodePlatform.Models.Identity;
+using EduCodePlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Г„Г®Г¤Г ВєГ¬Г® Г±ГҐГ°ГўВіГ±ГЁ Г¤Г® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г 
-builder.Services.AddControllersWithViews();
-
-// ГђГҐВєГ±ГІГ°ГіВєГ¬Г® ГЄГ®Г­ГІГҐГЄГ±ГІ ГЎГ Г§ГЁ Г¤Г Г­ГЁГµ123123123
+// 1. DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity Г§ ГўГ ГёГЁГ¬ ApplicationUser : IdentityUser
+// 2. Identity з ролями
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.Password.RequireDigit = false;
-    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
 })
+.AddRoles<IdentityRole>() // <-- Додаємо підтримку ролей
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ГЊГ®Г¦Г«ГЁГўГ®, ГїГЄГ№Г® ГЇГ«Г Г­ГіВєГІГҐ ГўГЁГЄГ®Г°ГЁГ±ГІГ®ГўГіГўГ ГІГЁ Г±ГІГ®Г°ВіГ­ГЄГЁ Razor Area Identity
+// 3. Razor Pages + MVC
 builder.Services.AddRazorPages();
-
-// ГЊГ®Г¦Г­Г  ГІГ ГЄГ®Г¦ .AddControllersWithViews()
 builder.Services.AddControllersWithViews();
 
+// 4. Сервіс для перевірки коду (AngleSharp, ExCSS, Jint)
+builder.Services.AddScoped<CodeCheckService>();
+
+// Тільки тепер будуємо app
 var app = builder.Build();
+
+// Викликаємо методи, які вимагають готового app
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    await RoleInitializer.SeedRolesAndAdminAsync(roleManager, userManager);
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -37,20 +46,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// Identity
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ГЊГ Г°ГёГ°ГіГІГЁ
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
 
-// Г„Г«Гї Razor Pages Identity
 app.MapRazorPages();
 
 app.Run();

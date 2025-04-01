@@ -4,6 +4,7 @@ using EduCodePlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduCodePlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250324190644_AddReferenceFields")]
+    partial class AddReferenceFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,7 +256,7 @@ namespace EduCodePlatform.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
@@ -290,8 +293,6 @@ namespace EduCodePlatform.Migrations
                         .HasColumnName("Title");
 
                     b.HasKey("TaskId");
-
-                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("DifficultyId");
 
@@ -1068,19 +1069,11 @@ namespace EduCodePlatform.Migrations
 
             modelBuilder.Entity("EduCodePlatform.Data.Entities.CodingTask", b =>
                 {
-                    b.HasOne("EduCodePlatform.Models.Identity.ApplicationUser", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("EduCodePlatform.Data.Entities.TaskDifficulty", "Difficulty")
                         .WithMany()
                         .HasForeignKey("DifficultyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Difficulty");
                 });

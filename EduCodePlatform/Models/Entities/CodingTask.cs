@@ -1,4 +1,4 @@
-﻿using EduCodePlatform.Models.Entities;
+﻿using EduCodePlatform.Models.Identity;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EduCodePlatform.Data.Entities
 {
     [Table("Task")]
-    public class CodingTask 
+    public class CodingTask
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -21,8 +21,6 @@ namespace EduCodePlatform.Data.Entities
 
         [Column("DifficultyId")]
         public int DifficultyId { get; set; }
-
-        [ForeignKey(nameof(DifficultyId))]
         public TaskDifficulty Difficulty { get; set; }
 
         [Column("IsAIgenerated")]
@@ -34,7 +32,17 @@ namespace EduCodePlatform.Data.Entities
         [Column("CreatedBy")]
         public string CreatedBy { get; set; }
 
+        // Можна зберігати референс-код, якщо хочемо
+        [Column("ReferenceHtml", TypeName = "text")]
+        public string ReferenceHtml { get; set; }
+
+        [Column("ReferenceCss", TypeName = "text")]
+        public string ReferenceCss { get; set; }
+
+        [Column("ReferenceJs", TypeName = "text")]
+        public string ReferenceJs { get; set; }
+
         [ForeignKey(nameof(CreatedBy))]
-        public AppUser CreatedByUser { get; set; }
+        public ApplicationUser CreatedByUser { get; set; }
     }
 }

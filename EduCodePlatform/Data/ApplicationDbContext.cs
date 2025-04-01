@@ -1,33 +1,31 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using EduCodePlatform.Models.Entities;
-using EduCodePlatform.Data.Entities;
+using EduCodePlatform.Models.Identity;         // ApplicationUser
+using EduCodePlatform.Data.Entities;           // Усі сутності (Badge, etc.)
+using EduCodePlatform.Models.Entities;         // CodeSubmission, etc.
+using System;
 
 namespace EduCodePlatform.Data
 {
-    // Тепер контекст успадковується від IdentityDbContext<AppUser>
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    // Наслідуємо від IdentityDbContext<...> – підтримка користувачів, ролей.
+    public class ApplicationDbContext
+        : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        // ========== DbSet-и ==========
-
-        // Таблиця користувачів (Identity автоматично створить AspNetUsers,
-        // але ми можемо змінити це у OnModelCreating, щоб була AppUser)
-        // Однак, якщо вам потрібно явно з нею працювати, лишаємо або видаляємо:
-        public DbSet<AppUser> AppUsers { get; set; }
-
-        // Таблиця мов програмування
-        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
+        // ========== DbSet-и (всі сутності зі схеми) ==========
 
         // Онлайн-редактор
         public DbSet<CodeSubmission> CodeSubmissions { get; set; }
         public DbSet<CodeSubmissionHistory> CodeSubmissionHistories { get; set; }
         public DbSet<CodeTestResult> CodeTestResults { get; set; }
         public DbSet<CodeAnalysisReport> CodeAnalysisReports { get; set; }
+
+        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
 
         // Завдання та тестові кейси
         public DbSet<TaskDifficulty> TaskDifficulties { get; set; }
@@ -55,47 +53,65 @@ namespace EduCodePlatform.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Базовий виклик: тепер важливо викликати base.OnModelCreating(),
-            // щоб Identity змогла налаштувати себе.
+            // Базовий виклик, щоб Identity могла налаштувати свої таблиці
             base.OnModelCreating(modelBuilder);
 
-            // --- 1) Мапимо AppUser на таблицю "AppUser" (замість AspNetUsers)
-            // Якщо хочете, щоб ваша сутність AppUser дійсно відображалась у табл. "AppUser"
-            // (а не в "AspNetUsers"), можна додати такий код:
-            modelBuilder.Entity<AppUser>(entity =>
+            // ====== (1) Перейменуємо таблиці Identity, якщо хочете ======
+            // Перейменувати AspNetUsers -> AppUser
+            modelBuilder.Entity<ApplicationUser>(entity =>
             {
-                entity.ToTable("AppUser");  // замість AspNetUsers
-
-                // Якщо треба переназвати поля Identity:
-                // entity.Property(u => u.Id).HasColumnName("UserId");
-                // entity.Property(u => u.UserName).HasColumnName("UserName").IsRequired();
-                // entity.Property(u => u.Email).HasColumnName("Email");
-                // entity.Property(u => u.PasswordHash).HasColumnName("PasswordHash");
-                // ...та інші поля, якщо потрібно.
-
-                // Якщо у вас вже поля в AppUser: UserId, Email, CreatedAt:
-                // не забудьте додати відповідні .HasColumnName(...) тут.
+                entity.ToTable("AppUser"); // Якщо хочете
+            });
+            // Перейменувати AspNetRoles -> AppRole
+            modelBuilder.Entity<IdentityRole>(entity =>
+            {
+                entity.ToTable("AppRole");
+            });
+            // Аналогічно AspNetUserRoles -> AppUserRole, якщо треба
+            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+            {
+                entity.ToTable("AppUserRole");
+            });
+            // AspNetUserClaims -> AppUserClaim (за потреби)
+            modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
+            {
+                entity.ToTable("AppUserClaim");
+            });
+            // AspNetUserLogins -> AppUserLogin
+            modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+            {
+                entity.ToTable("AppUserLogin");
+            });
+            // AspNetRoleClaims -> AppRoleClaim
+            modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
+            {
+                entity.ToTable("AppRoleClaim");
+            });
+            // AspNetUserTokens -> AppUserToken
+            modelBuilder.Entity<IdentityUserToken<string>>(entity =>
+            {
+                entity.ToTable("AppUserToken");
             });
 
-            // ======================
-            // 2) Обмеження каскадного видалення (Restrict) 
-            //    — щоб уникнути multiple cascade paths
-            // ======================
 
-            // CodingBattle -> CreatedByUser
+            // ====== (2) Каскадні обмеження (Restrict) =========
+            // Уникаємо multiple cascade paths
+
+            // Приклад: CodingBattle -> CreatedByUser
             modelBuilder.Entity<CodingBattle>()
                 .HasOne(cb => cb.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(cb => cb.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // BattleParticipant -> CodingBattle, -> AppUser
+            // BattleParticipant -> CodingBattle
             modelBuilder.Entity<BattleParticipant>()
                 .HasOne(bp => bp.CodingBattle)
                 .WithMany()
                 .HasForeignKey(bp => bp.BattleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // BattleParticipant -> AppUser
             modelBuilder.Entity<BattleParticipant>()
                 .HasOne(bp => bp.User)
                 .WithMany()
@@ -215,18 +231,12 @@ namespace EduCodePlatform.Data
                 .HasForeignKey(ub => ub.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Можна аналогічно налаштувати .WithMany(...) для колекцій,
-            // якщо потрібні навігаційні властивості "List<...>"
+            // CodeSubmission -> AppUser => (вже [Required], можете вирішити onDelete)
+            // EditorSetting -> AppUser => (можна Restrict або Cascade, залежно від вашої логіки)
 
-            // ======================
-            // Приклади індексів, унікальності, тощо
-            // ======================
+            // Приклади унікальних індексів, якщо треба
             // modelBuilder.Entity<ProgrammingLanguage>()
             //     .HasIndex(p => p.Name)
-            //     .IsUnique();
-
-            // modelBuilder.Entity<TaskDifficulty>()
-            //     .HasIndex(d => d.DifficultyName)
             //     .IsUnique();
         }
     }
