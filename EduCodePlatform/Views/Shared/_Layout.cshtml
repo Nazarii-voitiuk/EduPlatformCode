@@ -14,130 +14,155 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
 
-    <!-- Bootstrap 5 (CDN або локальний) -->
+    <!-- Bootstrap 5 (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
-    <!-- Font Awesome (іконки) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-    <!-- site.css -->
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <!-- custom.css -->
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dragonCursor.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fogCanvas.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
 </head>
-<body style="height:100%; display:flex; flex-direction:column; font-family: 'Open Sans', sans-serif;">
+<body style="height:100%; display:flex; flex-direction:column; font-family: 'Open Sans', sans-serif; margin:0;">
+
+    <!-- Canvas для дракон-курсора (глобально) -->
+    <canvas id="dragonCanvas"></canvas>
+    <script src="~/js/dragonCursor.js" asp-append-version="true"></script>
+
+    <!-- Навігація (чорний хедер) -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #000;">
             <div class="container-fluid">
-                <!-- Логотип / Назва сайту -->
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand fw-bold text-white" asp-controller="Home" asp-action="Index">
                     <i class="fa fa-code" aria-hidden="true"></i> EduCodePlatform
                 </a>
-                <!-- Кнопка для мобільної версії -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                         aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <!-- Основний блок меню -->
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- Home -->
+                        <!-- Публічні сторінки -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">
                                 <i class="fa fa-home"></i> Home
                             </a>
                         </li>
-
-                        <!-- Privacy -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">
                                 <i class="fa fa-shield-alt"></i> Privacy
                             </a>
                         </li>
-
-                        <!-- Submissions -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Submissions" asp-action="Index">
-                                <i class="fa fa-code-branch"></i> Submissions
-                            </a>
-                        </li>
-
-                        <!-- Gallery -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Submissions" asp-action="Gallery">
-                                <i class="fa fa-globe"></i> Gallery
-                            </a>
-                        </li>
-
-                        <!-- My Profile -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Submissions" asp-action="MyProfile">
-                                <i class="fa fa-user-circle"></i> My Profile
-                            </a>
-                        </li>
-
-                        <!-- Editor -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Submissions" asp-action="Editor">
-                                <i class="fa fa-edit"></i> Editor
-                            </a>
-                        </li>
-
-                        <!-- Tasks -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Tasks" asp-action="Index">
-                                <i class="fa fa-tasks"></i> Tasks
-                            </a>
-                        </li>
-
-                        <!-- Якщо потрібно, можна додати Difficulties -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="TaskDifficulty" asp-action="Index">
-                                <i class="fa fa-list-ul"></i> Difficulties
-                            </a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Index">
+                                        <i class="fa fa-code-branch"></i> Submissions
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Gallery">
+                                        <i class="fa fa-globe"></i> Gallery
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="MyProfile">
+                                        <i class="fa fa-user-circle"></i> My Profile
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Editor">
+                                        <i class="fa fa-edit"></i> Editor
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Tasks" asp-action="Index">
+                                        <i class="fa fa-tasks"></i> Tasks
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="TaskDifficulty" asp-action="Index">
+                                        <i class="fa fa-list-ul"></i> Difficulties
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-warning" asp-controller="Account" asp-action="DevResetPassword">
+                                        <i class="fa fa-tools"></i> Dev Reset Password
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Index">
+                                        <i class="fa fa-code-branch"></i> Submissions
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Gallery">
+                                        <i class="fa fa-globe"></i> Gallery
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="MyProfile">
+                                        <i class="fa fa-user-circle"></i> My Profile
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Submissions" asp-action="Editor">
+                                        <i class="fa fa-edit"></i> Editor
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Tasks" asp-action="Index">
+                                        <i class="fa fa-tasks"></i> Tasks
+                                    </a>
+                                </li>
+                            }
+                        }
                     </ul>
 
-                    <!-- Правий блок (автентифікація) -->
                     <ul class="navbar-nav ms-auto">
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <!-- Якщо залогінено -->
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-user"></i> @User.Identity.Name
+                                    <i class="fa fa-user"></i> @User.Identity!.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li>
-                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="AccessDenied">
                                             <i class="fa fa-cog"></i> Manage Account
                                         </a>
                                     </li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li>
-                                        <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="fa fa-sign-out-alt"></i> Logout
-                                            </button>
-                                        </form>
+
+                                    <li >
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Login">
+                                            <i class="fa fa-cog"></i> Login
+                                        </a>
                                     </li>
+
+
                                 </ul>
                             </li>
                         }
                         else
                         {
-                            <!-- Якщо неавторизовано -->
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">
                                     <i class="fa fa-sign-in-alt"></i> Login
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Register">
                                     <i class="fa fa-user-plus"></i> Register
                                 </a>
                             </li>
@@ -148,16 +173,16 @@
         </nav>
     </header>
 
-    <!-- Контент -->
+    <!-- Основний контент -->
     <div class="container mt-4 flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <!-- Футер -->
-    <footer class="footer bg-dark text-light py-3 mt-auto">
-        <div class="container text-center">
+    <!-- Футер (чорний) -->
+    <footer class="footer" style="background-color: #000;">
+        <div class="container text-center text-white py-3">
             <p class="mb-1">&copy; 2025 - EduCodePlatform</p>
             <p class="small">Learn. Code. Share.</p>
             <p>
@@ -168,13 +193,16 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <!-- site.js -->
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+    <!-- Дракон-курсор ми вже підключили на початку (рядок 59) -->
+    <!-- FogCanvas (туман) НЕ підключається тут глобально! -->
+    <!-- Важливо: рендеримо секцію FogCanvasSection ТІЛЬКИ де потрібно -->
+    @RenderSection("FogCanvasSection", required: false)
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

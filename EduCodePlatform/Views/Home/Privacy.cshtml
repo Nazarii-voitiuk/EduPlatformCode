@@ -1,6 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+
+@section FogCanvasSection {
+    <link rel="stylesheet" href="~/css/fogCanvas.css" asp-append-version="true" />
+
+    <canvas id="fog-canvas"></canvas>
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+
+    <style>
+        body {
+            background-color: #000 !important;
+            color: #fff;
+        }
+    </style>
+}
+
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+@section Scripts {
+    <!-- Підключаємо fogCanvas.js -->
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+}

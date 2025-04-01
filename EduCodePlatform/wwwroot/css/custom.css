@@ -1,42 +1,72 @@
+/* custom.css */
+
+/* Загальні стилі */
 html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
+    height: 100%;
+    background: #000;
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
 }
 
-body {
-    /* Див. інлайн-стилі у <body>, можна перенести сюди */
-    display: flex;
-    flex-direction: column;
-}
-
-.container.flex-grow-1 {
-    /* Можна налаштувати відступи, тло, тінь, тощо */
-}
-
-.footer {
-    /* Якщо треба змінити стилі футера */
+/* Забезпечення розташування контенту поверх фонового canvas */
+header, .container, footer {
     position: relative;
+    z-index: 2;
 }
 
-/* Приклад стилю для navbar brand */
-.navbar-brand {
-    font-size: 1.3rem;
-    letter-spacing: 0.5px;
+/* Стилізація hero-content */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
+    width: 90%;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
-/* Стилізуємо заголовки h2 */
-h2 {
-    border-left: 4px solid #6610f2; /* колір Bootstrap "purple" */
-    padding-left: 8px;
-    margin-bottom: 1rem;
+/* Стилізація елементів логін-форми */
+.login-form .form-control {
+    background-color: #111;
+    color: #fff;
+    border: 1px solid #444;
 }
 
-/* Застінюємо основні контейнери */
-.container {
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .login-form .form-control:focus {
+        background-color: #111;
+        color: #fff;
+        border-color: #1db954;
+        box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+    }
+
+.login-form .btn {
+    transition: 0.3s;
 }
 
+    .login-form .btn:hover {
+        transform: scale(1.02);
+    }
+
+/* Анімація тексту "glitch" */
+@keyframes glitch {
+    0% {
+        text-shadow: 1px 1px red, -1px -1px blue;
+    }
+
+    50% {
+        text-shadow: -2px 2px red, 2px -2px blue;
+    }
+
+    100% {
+        text-shadow: 1px -1px red, -1px 1px blue;
+    }
+}
+
+.glitch {
+    font-family: 'Courier New', monospace;
+    font-size: 2rem;
+    animation: glitch 1s infinite;
+}

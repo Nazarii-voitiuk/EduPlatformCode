@@ -1,0 +1,65 @@
+﻿@model EduCodePlatform.ViewModels.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Увійти";
+}
+
+@section FogCanvasSection {
+    <link rel="stylesheet" href="~/css/fogCanvas.css" asp-append-version="true" />
+
+    <!-- Canvas із частинками -->
+    <canvas id="fog-canvas"></canvas>
+
+    <!-- Підключення fogCanvas.js (оновленої версії) -->
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+
+    <style>
+        body {
+            background-color: #000 !important;
+            color: #fff;
+        }
+    </style>
+}
+
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh; position:relative; z-index:2;">
+    <div class="hero-content text-center">
+        <h2 class="glitch text-white mb-4">Увійти</h2>
+
+        <form asp-action="Login" method="post" class="login-form mx-auto">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label text-light"></label>
+                <input asp-for="Email" class="form-control bg-dark text-light border-secondary" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label text-light"></label>
+                <input asp-for="Password" type="password" class="form-control bg-dark text-light border-secondary" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3 text-start">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label text-light"></label>
+            </div>
+
+            <button type="submit" class="btn btn-outline-light w-100">Увійти</button>
+
+            <div class="mt-3">
+                <a asp-action="Register" class="text-info">Ще не маєте акаунту? Зареєструйтесь</a>
+            </div>
+
+            <div class="mt-3">
+                <a class="btn btn-outline-danger w-100" asp-controller="Account" asp-action="ExternalLogin" asp-route-provider="Google">
+                    <i class="fa fa-google"></i> Увійти через Google
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

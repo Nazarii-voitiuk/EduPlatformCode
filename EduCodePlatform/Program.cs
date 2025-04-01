@@ -1,8 +1,10 @@
-using Microsoft.AspNetCore.Identity;
+п»їusing Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EduCodePlatform.Data;
 using EduCodePlatform.Models.Identity;
 using EduCodePlatform.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,26 +12,42 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Identity з ролями
+// 2. Identity Р· СЂРѕР»СЏРјРё
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
 })
-.AddRoles<IdentityRole>() // <-- Додаємо підтримку ролей
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// 3. Razor Pages + MVC
+// 3. Google Authentication
+builder.Services.AddAuthentication()
+.AddGoogle("Google", options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
+
+
+// 4. Cookie fallback paths
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+// 5. Razor Pages + MVC
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-// 4. Сервіс для перевірки коду (AngleSharp, ExCSS, Jint)
+// 6. РЎРµСЂРІС–СЃ РґР»СЏ РїРµСЂРµРІС–СЂРєРё РєРѕРґСѓ
 builder.Services.AddScoped<CodeCheckService>();
 
-// Тільки тепер будуємо app
+// === Build App ===
 var app = builder.Build();
 
-// Викликаємо методи, які вимагають готового app
+// 7. Р†РЅС–С†С–Р°Р»С–Р·Р°С†С–СЏ СЂРѕР»РµР№ С– Р°РґРјС–РЅС–СЃС‚СЂР°С‚РѕСЂР°
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -38,6 +56,7 @@ using (var scope = app.Services.CreateScope())
     await RoleInitializer.SeedRolesAndAdminAsync(roleManager, userManager);
 }
 
+// 8. Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -46,9 +65,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
 
-app.UseAuthentication();
+app.UseRouting();
+app.UseAuthentication(); // рџ”Ґ РћР‘РћР’'РЇР—РљРћР’Рћ
 app.UseAuthorization();
 
 app.MapControllerRoute(

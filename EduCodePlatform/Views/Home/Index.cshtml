@@ -2,7 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
+@section FogCanvasSection {
+    <link rel="stylesheet" href="~/css/fogCanvas.css" asp-append-version="true" />
+
+    <canvas id="fog-canvas"></canvas>
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+
+    <style>
+        body {
+            background-color: #000 !important;
+            color: #fff;
+        }
+    </style>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+@section Scripts {
+    <!-- Підключаємо fogCanvas.js -->
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+}

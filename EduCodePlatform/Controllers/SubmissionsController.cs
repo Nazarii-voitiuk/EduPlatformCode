@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using EduCodePlatform.Models;
 
 namespace EduCodePlatform.Controllers
 {
@@ -243,30 +244,5 @@ namespace EduCodePlatform.Controllers
                 return Ok(new { message = "Created successfully", submissionId = newSubmission.CodeSubmissionId });
             }
         }
-    }
-
-    // ========== ViewModels/DTOs ==========
-    public class EditorViewModel
-    {
-        public int? CodeSubmissionId { get; set; }
-        public string Title { get; set; }
-        public bool IsPublic { get; set; }
-        public string HtmlCode { get; set; }
-        public string CssCode { get; set; }
-        public string JsCode { get; set; }
-
-        public string SelectedUserId { get; set; }
-        public List<ApplicationUser> AllUsers { get; set; } = new List<ApplicationUser>();
-    }
-
-    public class EditorInputModel
-    {
-        public int? CodeSubmissionId { get; set; }
-        public string Title { get; set; }
-        public bool IsPublic { get; set; }
-        public string HtmlCode { get; set; }
-        public string CssCode { get; set; }
-        public string JsCode { get; set; }
-        public string UserId { get; set; }
     }
 }

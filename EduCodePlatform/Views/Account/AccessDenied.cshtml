@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Доступ заборонено";
+}
+
+@section FogCanvasSection {
+    <link rel="stylesheet" href="~/css/fogCanvas.css" asp-append-version="true" />
+
+    <canvas id="fog-canvas"></canvas>
+    <script src="~/js/fogCanvas.js" asp-append-version="true"></script>
+
+    <style>
+        body {
+            background-color: #000 !important;
+            color: #fff;
+        }
+    </style>
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh; position:relative; z-index:2;">
+    <div class="hero-content text-center">
+        <h2 class="glitch text-white mb-3">⛔ Доступ заборонено</h2>
+        <p class="mb-4">Ви не маєте прав для перегляду цієї сторінки.</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+            Увійти
+        </a>
+    </div>
+</div>
