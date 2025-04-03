@@ -1,6 +1,7 @@
 ﻿using EduCodePlatform.Data;
 using EduCodePlatform.Models.Entities;
 using EduCodePlatform.Models.Identity;
+using EduCodePlatform.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using EduCodePlatform.Models;
 
 namespace EduCodePlatform.Controllers
 {
@@ -26,23 +26,26 @@ namespace EduCodePlatform.Controllers
             _userManager = userManager;
         }
 
-        // ========== PART A: Index (internal list) ==========
+        // ========== A: Internal List (Index) ==========
 
-        // GET: /Submissions/Index
-        // Тут користувач (Admin бачить усі, User – свої).
+        // /Submissions/Index
         public IActionResult Index()
         {
-            return View(); // Views/Submissions/Index.cshtml
+            // Повертає в’ю Views/Submissions/Index.cshtml
+            return View();
         }
 
-        // GET: /Submissions/GetAll
+        // /Submissions/GetAll
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             bool isAdmin = User.IsInRole("Admin");
 
-            var query = _db.CodeSubmissions.AsQueryable();
+            // Приєднуємо .Include(c => c.User), щоб дістати email
+            var query = _db.CodeSubmissions.Include(c => c.User).AsQueryable();
+
+            // Якщо не адмін, то фільтруємо лише свої
             if (!isAdmin)
             {
                 query = query.Where(x => x.UserId == currentUserId);
@@ -52,7 +55,7 @@ namespace EduCodePlatform.Controllers
                 .Select(c => new
                 {
                     c.CodeSubmissionId,
-                    c.UserId,
+                    UserEmail = c.User.Email,   // <-- замість UserId
                     c.Title,
                     c.IsPublic,
                     c.CreatedAt,
@@ -63,7 +66,7 @@ namespace EduCodePlatform.Controllers
             return Json(list);
         }
 
-        // DELETE: /Submissions/Delete/5
+        // DELETE /Submissions/Delete/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -72,11 +75,11 @@ namespace EduCodePlatform.Controllers
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 bool isAdmin = User.IsInRole("Admin");
 
-                var entity = await _db.CodeSubmissions
-                    .FirstOrDefaultAsync(c => c.CodeSubmissionId == id);
+                var entity = await _db.CodeSubmissions.FirstOrDefaultAsync(c => c.CodeSubmissionId == id);
                 if (entity == null)
                     return NotFound("Submission not found.");
 
+                // Перевіряємо права
                 if (!isAdmin && entity.UserId != currentUserId)
                     return Forbid();
 
@@ -91,27 +94,27 @@ namespace EduCodePlatform.Controllers
             }
         }
 
-        // ========== PART B: Gallery (публічні) ==========
+        // ========== B: Public Gallery ==========
 
-        // [AllowAnonymous] => щоб гість міг бачити
+        // /Submissions/Gallery
         [AllowAnonymous]
         public IActionResult Gallery()
         {
             return View(); // Views/Submissions/Gallery.cshtml
         }
 
-        // GET: /Submissions/GetPublic
+        // /Submissions/GetPublic
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPublic()
         {
-            // беремо лише IsPublic = true
             var list = await _db.CodeSubmissions
                 .Where(x => x.IsPublic)
+                .Include(c => c.User)
                 .Select(c => new
                 {
                     c.CodeSubmissionId,
-                    c.UserId,
+                    UserEmail = c.User.Email,
                     c.Title,
                     c.IsPublic,
                     c.CreatedAt
@@ -121,14 +124,15 @@ namespace EduCodePlatform.Controllers
             return Json(list);
         }
 
-        // ========== PART C: MyProfile (список лише своїх) ==========
+        // ========== C: MyProfile (список своїх) ==========
 
+        // /Submissions/MyProfile
         public IActionResult MyProfile()
         {
             return View(); // Views/Submissions/MyProfile.cshtml
         }
 
-        // GET: /Submissions/GetMy
+        // /Submissions/GetMy
         [HttpGet]
         public async Task<IActionResult> GetMy()
         {
@@ -136,10 +140,11 @@ namespace EduCodePlatform.Controllers
 
             var list = await _db.CodeSubmissions
                 .Where(x => x.UserId == currentUserId)
+                .Include(c => c.User)
                 .Select(c => new
                 {
                     c.CodeSubmissionId,
-                    c.UserId,
+                    UserEmail = c.User.Email,
                     c.Title,
                     c.IsPublic,
                     c.CreatedAt,
@@ -150,9 +155,8 @@ namespace EduCodePlatform.Controllers
             return Json(list);
         }
 
-        // ========== PART D: Editor (Create/Edit) ==========
+        // ========== D: Editor (Create/Edit) ==========
 
-        // GET: /Submissions/Editor?submissionId=...
         [HttpGet]
         public async Task<IActionResult> Editor(int? submissionId)
         {
@@ -165,7 +169,6 @@ namespace EduCodePlatform.Controllers
                     return NotFound("Submission not found.");
             }
 
-            // Якщо Admin -> дамо список користувачів
             var allUsers = new List<ApplicationUser>();
             if (User.IsInRole("Admin"))
             {
@@ -183,10 +186,9 @@ namespace EduCodePlatform.Controllers
                 SelectedUserId = existing?.UserId,
                 AllUsers = allUsers
             };
-            return View(model); // Views/Submissions/Editor.cshtml
+            return View(model);
         }
 
-        // POST: /Submissions/Save
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] EditorInputModel model)
         {
@@ -196,14 +198,12 @@ namespace EduCodePlatform.Controllers
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             bool isAdmin = User.IsInRole("Admin");
 
-            // Визначимо власника
             var finalUserId = isAdmin && !string.IsNullOrEmpty(model.UserId)
                 ? model.UserId
                 : currentUserId;
 
             if (model.CodeSubmissionId.HasValue && model.CodeSubmissionId > 0)
             {
-                // Edit
                 var entity = await _db.CodeSubmissions
                     .FirstOrDefaultAsync(x => x.CodeSubmissionId == model.CodeSubmissionId.Value);
                 if (entity == null)
@@ -226,7 +226,6 @@ namespace EduCodePlatform.Controllers
             }
             else
             {
-                // Create
                 var newSubmission = new CodeSubmission
                 {
                     UserId = finalUserId,

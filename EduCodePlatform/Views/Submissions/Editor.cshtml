@@ -7,37 +7,23 @@
 }
 
 <div class="container mt-4">
-    <h2 class="mb-3 text-center">
-        @if (Model.CodeSubmissionId.HasValue)
-        {
-            @:Edit Submission (ID=@Model.CodeSubmissionId)
-        }
-        else
-        {
-            @:Create New Submission
-        }
+    <h2 class="mb-4 text-center text-white">
+        @(Model.CodeSubmissionId.HasValue
+            ? $"Edit Submission (ID={Model.CodeSubmissionId})"
+            : "Create New Submission")
     </h2>
 
     @if (User.IsInRole("Admin"))
     {
         <div class="mb-3">
-            <label>Select Owner (User):</label>
-            <select id="userSelect" class="form-select">
+            <label class="form-label text-white">Select Owner (User):</label>
+            <select id="userSelect" class="form-select bg-dark text-light border-secondary">
                 <option value="">-- None --</option>
                 @foreach (var usr in Model.AllUsers)
                 {
-                    if (usr.Id == Model.SelectedUserId)
-                    {
-                        <option value="@usr.Id" selected="selected">
-                            @usr.UserName (@usr.Email)
-                        </option>
-                    }
-                    else
-                    {
-                        <option value="@usr.Id">
-                            @usr.UserName (@usr.Email)
-                        </option>
-                    }
+                    var isSelected = usr.Id == Model.SelectedUserId;
+                    var option = $"<option value='{usr.Id}' {(isSelected ? "selected" : "")}>{usr.UserName} ({usr.Email})</option>";
+                    @Html.Raw(option)
                 }
             </select>
         </div>
@@ -50,18 +36,19 @@
     <input type="hidden" id="submissionId" value="@Model.CodeSubmissionId" />
 
     <div class="mb-3">
-        <label>Title:</label>
-        <input type="text" id="titleInput" class="form-control" value="@Model.Title" />
+        <label class="form-label text-white">Title:</label>
+        <input type="text" id="titleInput" class="form-control bg-dark text-light border-secondary" value="@Model.Title" />
     </div>
 
     <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="isPublicCheck" @(Model.IsPublic ? "checked" : "") />
-        <label class="form-check-label" for="isPublicCheck">Public (Show in Gallery)</label>
+        <label class="form-check-label text-white" for="isPublicCheck">Public (Show in Gallery)</label>
     </div>
 
+    <!-- Code Editors -->
     <div class="row">
         <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+            <div class="card bg-dark text-light shadow-sm">
                 <div class="card-header bg-primary text-white">HTML</div>
                 <div class="card-body p-0">
                     <textarea id="htmlEditor">@Model.HtmlCode</textarea>
@@ -69,7 +56,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+            <div class="card bg-dark text-light shadow-sm">
                 <div class="card-header bg-success text-white">CSS</div>
                 <div class="card-body p-0">
                     <textarea id="cssEditor">@Model.CssCode</textarea>
@@ -77,7 +64,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+            <div class="card bg-dark text-light shadow-sm">
                 <div class="card-header bg-warning text-dark">JS</div>
                 <div class="card-body p-0">
                     <textarea id="jsEditor">@Model.JsCode</textarea>
@@ -86,21 +73,17 @@
         </div>
     </div>
 
-    <div class="row mb-3">
-        <div class="col text-center">
-            <button class="btn btn-primary me-2" onclick="runPreview()">Run</button>
-            <button class="btn btn-success" onclick="saveSubmission()">Save</button>
-        </div>
+    <!-- Buttons -->
+    <div class="text-center mb-3">
+        <button class="btn btn-primary me-2" onclick="runPreview()">Run</button>
+        <button class="btn btn-success" onclick="saveSubmission()">Save</button>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Preview</div>
-                <div class="card-body p-0" style="height:400px;">
-                    <iframe id="previewFrame" style="width:100%; height:100%; border:0;"></iframe>
-                </div>
-            </div>
+    <!-- Preview -->
+    <div class="card bg-dark text-light shadow-sm">
+        <div class="card-header bg-secondary text-white">Preview</div>
+        <div class="card-body p-0" style="height:400px;">
+            <iframe id="previewFrame" style="width:100%; height:100%; border:0;"></iframe>
         </div>
     </div>
 </div>
@@ -109,27 +92,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/theme/neo.min.css" rel="stylesheet" />
-
     <style>
+        body {
+            background-color: #000;
+        }
+
         .CodeMirror {
             height: 300px;
-            border: 1px solid #ddd;
+            border: 1px solid #444;
+            background-color: #111;
+            color: #fff;
         }
 
         .CodeMirror-scroll {
             overflow-y: auto;
             overflow-x: auto;
         }
+
+        label.form-label, .form-check-label {
+            color: #fff;
+        }
     </style>
 }
 
 @section Scripts {
-    <!-- CodeMirror -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/addon/edit/closetag.min.js"></script>
-
     <script src="~/js/editorPage.js"></script>
 }

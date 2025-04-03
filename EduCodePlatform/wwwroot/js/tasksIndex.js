@@ -4,7 +4,6 @@ $(document).ready(function () {
     loadTasks();
 });
 
-// 1) Завантажити tasks
 function loadTasks() {
     $.ajax({
         url: '/Tasks/GetAll',
@@ -35,25 +34,23 @@ function loadTasks() {
     });
 }
 
-// 2) Create
 function openCreateModal() {
     editMode = false;
     clearModal();
     $('#taskModalLabel').text("Create Task");
     $('#saveBtn').text("Create");
-
-    // Завантажимо список Difficulties
     loadDifficultiesIntoSelect(0);
 
-    $('#taskModal').modal('show');
+    // Відкрити (Bootstrap 5)
+    const modalEl = document.getElementById('taskModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 }
 
 function openEditModal(id) {
     editMode = true;
     clearModal();
 
-    // Потрібно завантажити повний Task (включно з ReferenceHtml/Css/Js). 
-    // У GetAll() їх нема, тому зробимо окремий GET /Tasks/GetById/${id}
     $.ajax({
         url: `/Tasks/GetById/${id}`,
         type: 'GET',
@@ -63,17 +60,18 @@ function openEditModal(id) {
             $('#Description').val(task.description || '');
             $('#IsAIgenerated').prop('checked', task.isAIgenerated === true);
 
-            // Сетимо Reference
             $('#ReferenceHtml').val(task.referenceHtml || '');
             $('#ReferenceCss').val(task.referenceCss || '');
             $('#ReferenceJs').val(task.referenceJs || '');
 
-            // Для Difficulty
             loadDifficultiesIntoSelect(task.difficultyId);
 
             $('#taskModalLabel').text("Edit Task (#" + task.taskId + ")");
             $('#saveBtn').text("Save Changes");
-            $('#taskModal').modal('show');
+
+            const modalEl = document.getElementById('taskModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
         },
         error: function (xhr) {
             alert("Error: " + xhr.responseText);
@@ -81,7 +79,6 @@ function openEditModal(id) {
     });
 }
 
-// Очищення форми
 function clearModal() {
     $('#TaskId').val('');
     $('#Title').val('');
@@ -95,7 +92,6 @@ function clearModal() {
     $('#DifficultySelect').empty();
 }
 
-// Завантажити Difficulties
 function loadDifficultiesIntoSelect(selectedId) {
     $.ajax({
         url: '/TaskDifficulty/GetAll',
@@ -125,14 +121,12 @@ function saveTask() {
         description: $('#Description').val(),
         difficultyId: parseInt($('#DifficultySelect').val() || 0),
         isAIgenerated: $('#IsAIgenerated').is(':checked'),
-
         referenceHtml: $('#ReferenceHtml').val(),
         referenceCss: $('#ReferenceCss').val(),
         referenceJs: $('#ReferenceJs').val()
     };
 
     if (!editMode) {
-        // CREATE
         $.ajax({
             url: '/Tasks/CreateAjax',
             type: 'POST',
@@ -140,16 +134,14 @@ function saveTask() {
             data: JSON.stringify(dataObj),
             success: function (res) {
                 alert(res.message);
-                $('#taskModal').modal('hide');
+                closeTaskModal();
                 loadTasks();
             },
             error: function (xhr) {
                 alert("Error: " + xhr.responseText);
             }
         });
-    }
-    else {
-        // EDIT
+    } else {
         $.ajax({
             url: '/Tasks/EditAjax',
             type: 'PUT',
@@ -157,13 +149,21 @@ function saveTask() {
             data: JSON.stringify(dataObj),
             success: function (res) {
                 alert(res.message);
-                $('#taskModal').modal('hide');
+                closeTaskModal();
                 loadTasks();
             },
             error: function (xhr) {
                 alert("Error: " + xhr.responseText);
             }
         });
+    }
+}
+
+function closeTaskModal() {
+    const modalEl = document.getElementById('taskModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) {
+        modal.hide();
     }
 }
 
@@ -182,7 +182,7 @@ function deleteTask(id) {
     });
 }
 
-// Кнопки Solve, ManageTestCases
+// Додаткові кнопки:
 function goSolve(id) {
     window.location.href = '/Tasks/Solve?taskId=' + id;
 }

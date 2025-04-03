@@ -14,7 +14,7 @@ function loadSubmissions() {
                 let row = `
                   <tr>
                     <td>${item.codeSubmissionId}</td>
-                    <td>${item.userId}</td>
+                    <td>${item.userEmail || ''}</td>
                     <td>${item.title || ''}</td>
                     <td>${item.isPublic}</td>
                     <td>${formatDate(item.createdAt)}</td>

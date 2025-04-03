@@ -1,30 +1,34 @@
-﻿// Глобальні змінні (за бажанням)
-let editMode = false; // Якщо true, тоді ми редагуємо існуючу мову
+﻿let editMode = false;
 
 $(document).ready(function () {
     loadLanguages();
 });
 
-// 1. Завантаження списку
 function loadLanguages() {
     $.ajax({
         url: '/ProgrammingLanguage/GetAll',
         type: 'GET',
         success: function (data) {
-            // Очищаємо таблицю
             let tbody = $('#languageTable tbody');
             tbody.empty();
 
-            // data - це масив об'єктів { languageId, name }
             data.forEach(function (lang) {
-                let row = `<tr>
-                    <td>${lang.languageId}</td>
-                    <td>${lang.name}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="openEditModal(${lang.languageId}, '${lang.name}')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteLanguage(${lang.languageId})">Delete</button>
-                    </td>
-                </tr>`;
+                let row = `
+                    <tr>
+                        <td>${lang.languageId}</td>
+                        <td>${lang.name}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" 
+                                onclick="openEditModal(${lang.languageId}, '${lang.name}')">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteLanguage(${lang.languageId})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
                 tbody.append(row);
             });
         },
@@ -34,32 +38,34 @@ function loadLanguages() {
     });
 }
 
-// 2. Відкрити модальне вікно для створення
+// Відкрити модальне вікно для створення
 function openCreateModal() {
     editMode = false;
-    $('#LanguageId').val('');      // Порожньо
-    $('#LanguageName').val('');    // Порожньо
+    $('#LanguageId').val('');
+    $('#LanguageName').val('');
     $('#languageModalLabel').text('Create New Language');
     $('#saveBtn').text('Create');
-    $('#languageModal').modal('show');
+
+    // Показати модалку (Bootstrap 5)
+    const modalEl = document.getElementById('languageModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 }
 
-// 3. Відкрити модальне вікно для редагування
+// Відкрити модальне вікно для редагування
 function openEditModal(id, name) {
     editMode = true;
     $('#LanguageId').val(id);
     $('#LanguageName').val(name);
     $('#languageModalLabel').text('Edit Language');
     $('#saveBtn').text('Save Changes');
-    $('#languageModal').modal('show');
+
+    const modalEl = document.getElementById('languageModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 }
 
-// 4. Закрити модальне вікно
-function closeModal() {
-    $('#languageModal').modal('hide');
-}
-
-// 5. Зберегти (Create / Edit)
+// Зберегти (Create / Edit)
 function saveLanguage() {
     let id = $('#LanguageId').val();
     let name = $('#LanguageName').val();
@@ -107,7 +113,16 @@ function saveLanguage() {
     }
 }
 
-// 6. Видалити
+// Закрити модальне вікно вручну (якщо треба)
+function closeModal() {
+    const modalEl = document.getElementById('languageModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) {
+        modal.hide();
+    }
+}
+
+// Видалити
 function deleteLanguage(id) {
     if (!confirm("Are you sure you want to delete this language?")) return;
 

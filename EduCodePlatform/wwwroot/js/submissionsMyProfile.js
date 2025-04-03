@@ -11,20 +11,23 @@ function loadMySubmissions() {
             container.empty();
 
             data.forEach(item => {
-                let card = `
-                  <div class="col-md-4 mb-3">
-                    <div class="card shadow-sm">
-                      <div class="card-body">
-                        <h5>${item.title || 'No Title'}</h5>
-                        <p>Public: ${item.isPublic}</p>
-                        <p>UpdatedAt: ${formatDate(item.updatedAt)}</p>
-                        <button class="btn btn-info btn-sm" onclick="goEdit(${item.codeSubmissionId})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteSubmission(${item.codeSubmissionId})">Delete</button>
+                let cardHtml = `
+                  <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-light shadow h-100">
+                      <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${item.title || 'No Title'}</h5>
+                        <p class="mb-1">Public: ${item.isPublic}</p>
+                        <p class="small text-muted">Owner: ${item.userEmail || ''}</p>
+                        <p class="small text-muted">UpdatedAt: ${formatDate(item.updatedAt)}</p>
+                        <div class="mt-auto pt-2">
+                          <button class="btn btn-info btn-sm me-2" onclick="goEdit(${item.codeSubmissionId})">Edit</button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteSubmission(${item.codeSubmissionId})">Delete</button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 `;
-                container.append(card);
+                container.append(cardHtml);
             });
         },
         error: function (xhr) {
@@ -64,4 +67,13 @@ function formatDate(str) {
     if (!str) return "";
     let d = new Date(str);
     return d.toLocaleString();
+}
+
+
+// Використовуємо ту ж функцію попереднього перегляду
+function previewProject(submissionId) {
+    let previewUrl = '/Submissions/Preview?submissionId=' + submissionId;
+    $('#previewIframe').attr('src', previewUrl);
+    let previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
 }

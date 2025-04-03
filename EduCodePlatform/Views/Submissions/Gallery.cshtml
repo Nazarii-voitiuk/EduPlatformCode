@@ -2,10 +2,23 @@
     ViewData["Title"] = "Public Gallery";
 }
 
-<h2>Public Gallery</h2>
+<h2 class="mb-4">Public Gallery</h2>
 
-<div class="row" id="galleryContainer">
-    <!-- Cards loaded via AJAX -->
+<div class="row" id="galleryContainer"></div>
+
+<!-- Модалка Preview -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Project Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0" style="height:400px;">
+                <iframe id="previewIframe" style="width:100%; height:100%; border:0;"></iframe>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

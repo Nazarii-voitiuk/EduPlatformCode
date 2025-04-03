@@ -17,8 +17,14 @@ function loadDifficulties() {
                     <td>${d.difficultyId}</td>
                     <td>${d.difficultyName}</td>
                     <td>
-                        <button class="btn btn-sm btn-info" onclick="openEditModal(${d.difficultyId}, '${escapeStr(d.difficultyName)}')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteDifficulty(${d.difficultyId})">Delete</button>
+                        <button class="btn btn-sm btn-info" 
+                            onclick="openEditModal(${d.difficultyId}, '${escapeStr(d.difficultyName)}')">
+                            Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" 
+                            onclick="deleteDifficulty(${d.difficultyId})">
+                            Delete
+                        </button>
                     </td>
                 </tr>
                 `;
@@ -35,7 +41,10 @@ function openCreateModal() {
     editMode = false;
     clearModal();
     $('#diffModalLabel').text("Create Difficulty");
-    $('#diffModal').modal('show');
+
+    const modalEl = document.getElementById('diffModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 }
 
 function openEditModal(id, name) {
@@ -44,7 +53,10 @@ function openEditModal(id, name) {
     $('#DifficultyId').val(id);
     $('#DifficultyName').val(name);
     $('#diffModalLabel').text("Edit Difficulty #" + id);
-    $('#diffModal').modal('show');
+
+    const modalEl = document.getElementById('diffModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 }
 
 function clearModal() {
@@ -70,7 +82,7 @@ function saveDifficulty() {
             data: JSON.stringify(dataObj),
             success: function (res) {
                 alert(res.message);
-                $('#diffModal').modal('hide');
+                closeModal();
                 loadDifficulties();
             },
             error: function (xhr) {
@@ -86,7 +98,7 @@ function saveDifficulty() {
             data: JSON.stringify(dataObj),
             success: function (res) {
                 alert(res.message);
-                $('#diffModal').modal('hide');
+                closeModal();
                 loadDifficulties();
             },
             error: function (xhr) {
@@ -109,6 +121,14 @@ function deleteDifficulty(id) {
             alert("Error: " + xhr.responseText);
         }
     });
+}
+
+function closeModal() {
+    const modalEl = document.getElementById('diffModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) {
+        modal.hide();
+    }
 }
 
 function escapeStr(str) {

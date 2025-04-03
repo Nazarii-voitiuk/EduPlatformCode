@@ -4,6 +4,8 @@
     left: 0;
     width: 100%;
     height: 100%;
+    /* ВАЖЛИВО: кліки проходять крізь нього */
     pointer-events: none;
-    z-index: 999;
+    /* Низький z-index, щоб модалка була зверху */
+    z-index: 1;
 }

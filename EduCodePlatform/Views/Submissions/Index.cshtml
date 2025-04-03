@@ -1,16 +1,17 @@
 ﻿@{
-    ViewData["Title"] = "Submissions - Internal List";
+    ViewData["Title"] = "Submissions (Internal)";
 }
 
-<h2>Submissions (Internal)</h2>
+<h2 class="mb-4">Submissions (Internal)</h2>
 
 <button class="btn btn-primary mb-3" onclick="goCreate()">Create New Submission</button>
 
-<table class="table table-bordered" id="submissionsTable">
+<!-- Темна таблиця -->
+<table class="table table-dark table-hover table-bordered" id="submissionsTable">
     <thead>
         <tr>
             <th>ID</th>
-            <th>UserId</th>
+            <th>Email</th>
             <th>Title</th>
             <th>IsPublic</th>
             <th>CreatedAt</th>

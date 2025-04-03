@@ -1,20 +1,13 @@
 ﻿/* fogCanvas.css */
 
-html, body {
-    margin: 0;
-    padding: 0;
-    background-color: #000; /* Залишаємо чорний фон */
-    height: 100%;
-    width: 100%;
-}
-
-/* Canvas на весь екран з ефектом "диму" */
 #fog-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /*z-index: -1;*/ /* Canvas позаду всіх елементів */
-    pointer-events: none; /* Кліки проходять "крізь" нього */
+    /* Кліки проходять крізь */
+    pointer-events: none;
+    /* Низький z-index */
+    z-index: 1;
 }
